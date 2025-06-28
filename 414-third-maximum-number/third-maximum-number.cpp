@@ -1,23 +1,24 @@
- class Solution {
+class Solution {
 public:
     int thirdMax(vector<int>& nums) {
-        sort(nums.begin(), nums.end());  
-        int n = nums.size();
-        int k = 3;
-        int count = 1;  
-        int prev = nums[n - 1];  
+        long first = LONG_MIN, second = LONG_MIN, third = LONG_MIN;
 
-        for (int i = n - 2; i >= 0; i--) {
-            if (nums[i] != prev) {
-                count++;
-                prev = nums[i];
-                if (count == 3) {
-                    return nums[i];
-                }
+        for (int val : nums) {
+            
+            if (val == first || val == second || val == third) continue;
+
+            if (val > first) {
+                third = second;
+                second = first;
+                first = val;
+            } else if (val > second) {
+                third = second;
+                second = val;
+            } else if (val > third) {
+                third = val;
             }
         }
 
-      
-        return nums[n - 1];
+        return third == LONG_MIN ? first : third;
     }
 };
