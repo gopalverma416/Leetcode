@@ -2,7 +2,7 @@ class Solution {
 public:
     bool isHappy(int n) {
         int total = n;
-        for (int j = 0; j < 50; j++) {
+        for (int j = 0; j < 30; j++) {
             string s = to_string(total);
             int sum = 0;  
             for (int i = 0; i < s.size(); i++) {
