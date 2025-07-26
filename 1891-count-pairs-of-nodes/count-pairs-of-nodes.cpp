@@ -3,12 +3,17 @@
 #include <algorithm>
 #include <queue>
 using namespace std;
-
+class shorting{
+    public:
+    void calculating(vector<int>& m){
+         sort(begin(m), end(m));
+    }
+};
 class ramuKaka {
 public:
     vector<int> solve(int n, vector<vector<int>>& edges, vector<int>& queries) {
         vector<int> cnt(n + 1), s(n + 1), res;
-        vector<int> sorted_cnt(n + 1);  // ✅ Needed for sorting
+        vector<int> sorted_cnt(n + 1); 
         vector<unordered_map<int, int>> shared(n + 1);
 
         for (auto& e : edges) {
@@ -24,7 +29,7 @@ public:
             a++;
         }
 
-        sorting(sorted_cnt);  // ✅ Corrected function call
+        sorting(sorted_cnt); 
 
         for (int i = 0; i < n; i++) {
             a--;
@@ -79,7 +84,8 @@ public:
 
 private:
     void sorting(vector<int>& a) {
-        sort(begin(a), end(a));
+       shorting shorted;
+       shorted.calculating(a);
     }
 };
 
