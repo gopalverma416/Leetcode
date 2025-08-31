@@ -1,9 +1,11 @@
 class Solution {
 private:
-    int solve(int left, int right, vector<int>& nums, vector<vector<int>> &dp) {
-        if (left + 1 == right) return 0;
+    int solve(int left, int right, vector<int>& nums, vector<vector<int>>& dp) {
+        if (left + 1 == right)
+            return 0;
 
-        if (dp[left][right] != -1) return dp[left][right];
+        if (dp[left][right] != -1)
+            return dp[left][right];
 
         int maxCoins = 0;
         for (int i = left + 1; i < right; i++) {
