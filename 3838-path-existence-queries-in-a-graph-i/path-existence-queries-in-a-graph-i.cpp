@@ -41,7 +41,7 @@ public:
         for (int i = 0; i < n; i++) {
             nodes.push_back({nums[i], i});
         }
-        sort(nodes.begin(), nodes.end());
+        // sort(nodes.begin(), nodes.end());
 
       
         for (int i = 0; i < n-1; i++) {
