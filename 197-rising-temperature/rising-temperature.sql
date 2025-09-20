@@ -1,5 +1,5 @@
-SELECT w1.id 
-FROM Weather w1
-JOIN Weather w2 
-  ON DATE_ADD(w2.recordDate, INTERVAL 1 DAY) = w1.recordDate
-WHERE w1.temperature > w2.temperature;
+select w.id 
+from Weather w
+left join Weather s on DATEDIFF(w.recordDate,s.recordDate)=1
+where w.temperature> s.temperature;
+
