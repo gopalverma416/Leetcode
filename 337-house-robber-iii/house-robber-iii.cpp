@@ -10,20 +10,28 @@
  * };
  */
 class Solution {
-public:
-pair<int,int> dfs(TreeNode* root){
-    if(!root){
-        return {0,0};
+    private:
+    unordered_map<TreeNode*,int>mp;
+    int solve(TreeNode* root){
+        if(!root){
+            return 0;
+        }
+        if(mp.count(root)){
+            return mp[root];
+        }
+        int take=root->val;
+        if(root->left){
+            take+=solve(root->left->left)+solve(root->left->right);
+        }
+        if(root->right){
+         take+=solve(root->right->left)+solve(root->right->right);
+        }
+        int nonTake=0;
+        nonTake=solve(root->left)+solve(root->right);
+        return mp[root]=max(nonTake,take);
     }
-    auto left=dfs(root->left);
-    auto right=dfs(root->right);
-    int rob=root->val+left.second+right.second;
-    int notrob=max(left.first,left.second)+max(right.first,right.second);
-    return {rob,notrob};
-    
-}
+public:
     int rob(TreeNode* root) {
-        auto ans=dfs(root);
-        return max(ans.first,ans.second);
+        return solve(root);
     }
 };
