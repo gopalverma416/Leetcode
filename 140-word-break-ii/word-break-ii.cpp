@@ -1,36 +1,32 @@
 class Solution {
-private:
-    unordered_set<string> dict;
-
-    void solve(int idx, string& s, string str, vector<string>& result) {
-        int n = s.size();
-        if (idx == n) {
-            result.push_back(str);
-            return;
-        }
-
-        for (int len = 1; idx + len <= n; len++) {
-            string sub = s.substr(idx, len);
-            if (dict.count(sub)) {
-                string current;
-                if (str.empty()) {
-                    current = sub;
-                } else {
-                    current = str + " " + sub;
-                }
-                solve(idx + len, s, current, result);
-            }
-        }
-    }
-
 public:
-    vector<string> wordBreak(string s, vector<string>& wordDict) {
-        dict.clear();
-        for (auto& word : wordDict) {
-            dict.insert(word);
+    set<string> st;
+    vector<string> result;
+    void solve(int idx, string& s, string& ans) {
+        int n = s.size();
+        if (idx==n){
+            result.push_back(ans);
         }
-        vector<string> result;
-        solve(0, s, "", result);
+            for (int len = 1; len < n-idx+1; len++) {
+                string news = s.substr(idx, len);
+                if (st.find(news) != st.end()) {
+                    string prev = ans;
+                    ans += news;
+                    if(idx+len<n){
+                    ans+=' ';
+                    }
+                   
+                    solve(idx + len, s, ans);
+                    ans = prev;
+                }
+            }
+    }
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        for (auto qw : wordDict) {
+            st.insert(qw);
+        }
+        string ans="";
+        solve(0,s,ans);
         return result;
     }
 };
