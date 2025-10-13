@@ -1,63 +1,52 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
 class Solution {
-private:
-    TreeNode* curr;
-
-    void dfs(TreeNode* node, TreeNode* prev,
-             unordered_map<TreeNode*, TreeNode*>& parent,
-             vector<int>& ans, int cnt, int k) {
-
-        if (!node) return;
-        if (cnt == k) {
-            ans.push_back(node->val);
-            return;
-        }
-
-        if (node->left && node->left != prev)
-            dfs(node->left, node, parent, ans, cnt + 1, k);
-
-        if (node->right && node->right != prev)
-            dfs(node->right, node, parent, ans, cnt + 1, k);
-
-        if (parent[node] && parent[node] != prev)
-            dfs(parent[node], node, parent, ans, cnt + 1, k);
-    }
-
-    void buildParent(TreeNode* root, unordered_map<TreeNode*, TreeNode*>& parent, TreeNode* target) {
-        queue<TreeNode*> pq;
-        pq.push(root);
-        parent[root] = nullptr;
-        while (!pq.empty()) {
-            TreeNode* node = pq.front();
-            pq.pop();
-            if (node == target) {
-                curr = target;
-            }
-            if (node->left) {
-                parent[node->left] = node;
-                pq.push(node->left);
-            }
-            if (node->right) {
-                parent[node->right] = node;
-                pq.push(node->right);
-            }
-        }
-    }
-
 public:
+    unordered_map<TreeNode*, TreeNode*> mp;
+    void parent(TreeNode* root){
+        TreeNode* temp=root;
+        queue<TreeNode*>pq;
+        pq.push(root);
+        while(!pq.empty()){
+          TreeNode* temp=pq.front();
+          pq.pop();
+          if(temp->left){
+            pq.push(temp->left);
+            mp[temp->left]=temp;
+          }  
+          if(temp->right){
+            pq.push(temp->right);
+            mp[temp->right]=temp;
+          }
+        }
+    }
     vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
-        unordered_map<TreeNode*, TreeNode*> parent;
-        buildParent(root, parent, target);
         vector<int> ans;
-        dfs(curr, nullptr, parent, ans, 0, k);
-        return ans;
+        parent(root);
+        queue<pair<int,TreeNode*>>pq;
+        pq.push({0,target});
+       unordered_map<TreeNode*,bool>visited;
+         visited[target] = true; 
+        while(!pq.empty()){
+            auto [len,curr]=pq.front();
+            pq.pop();
+            visited[curr]=true;
+            if(len==k){
+                ans.push_back(curr->val);
+                continue;
+            }
+            if(len>k){
+                continue;
+            }
+            if(curr->left && !visited[curr->left]){
+                pq.push({len+1,curr->left});
+            }
+            if(curr->right && !visited[curr->right]){
+                pq.push({len+1,curr->right});
+            }
+            if(mp.find(curr)!=mp.end() && !visited[mp[curr]]){
+                pq.push({len+1,mp[curr]});
+            }
+        }
+       return ans;
     }
 };
