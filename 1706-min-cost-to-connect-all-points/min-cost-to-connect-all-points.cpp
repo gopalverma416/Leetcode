@@ -1,30 +1,31 @@
 class Solution {
 public:
     int minCostConnectPoints(vector<vector<int>>& points) {
+        using P=pair<int,int>;
+      
         int n=points.size();
-        vector<bool>vis(n+1,false);
-        int connected=0;
-        int totalCost=0;
-        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;
-
-        pq.push({0,0});
-        while(connected < n){
-            auto [cost, u]=pq.top();
+        int conn=0;
+        int total=0;
+        priority_queue<P,vector<P>,greater<P>>pq;
+          pq.push({0,0});
+        vector<int>vis(n,-1);
+        while(conn<n){
+            auto [cost,u]=pq.top();
             pq.pop();
-            if(vis[u]==true){
+            if(vis[u]!=-1){
                 continue;
             }
-            vis[u]=true;
-            totalCost+=cost;
-            connected++;
+            vis[u]=1;
+            conn++;
+            total+=cost;
             for(int v=0;v<n;v++){
-                if(!vis[v]){
-                    int dist=abs(points[u][0]-points[v][0])+abs(points[u][1]-points[v][1]);
-                      pq.push({dist,v});
+                if(vis[v]!=-1){
+                    continue;
                 }
-              
+                int dist=(abs(points[v][1]-points[u][1])+abs(points[v][0]-points[u][0]));
+                pq.push({dist,v});
             }
         }
-        return totalCost;
+        return total;
     }
 };
