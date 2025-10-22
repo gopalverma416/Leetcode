@@ -12,15 +12,15 @@ public:
         if (end + 1 < n) diff[end + 1] -= val;
     }
 
-    // Step 2: prefix sum to get net shift at each position
+   
     for (int i = 1; i < n; i++) {
         diff[i] += diff[i - 1];
     }
 
-    // Step 3: apply shifts to string
+    
     for (int i = 0; i < n; i++) {
-        int shift_val = diff[i] % 26;   // handle large numbers
-        if (shift_val < 0) shift_val += 26; // handle negative shifts
+        int shift_val = diff[i] % 26;   
+        if (shift_val < 0) shift_val += 26; 
         s[i] = 'a' + (s[i] - 'a' + shift_val) % 26;
     }
 
