@@ -11,8 +11,8 @@ public:
             finalSum -= currentEven;
             currentEven += 2;
         } else {
-            // last number to complete the sum
-            result.back() += finalSum; // add remaining to last number
+          
+            result.back() += finalSum; 
             break;
         }
     }
