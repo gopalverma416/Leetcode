@@ -9,7 +9,7 @@ public:
         for (int right = 0; right < n; right++) {
             mp[nums[right]]++;
 
-            // when window size exceeds k, shrink from left
+          
             if (right - left + 1 > k) {
                 mp[nums[left]]--;
                 if (mp[nums[left]] == 0)
@@ -17,7 +17,6 @@ public:
                 left++;
             }
 
-            // when window is exactly size k
             if (right - left + 1 == k) {
                
                 vector<pair<int, int>> freq(mp.begin(), mp.end());
