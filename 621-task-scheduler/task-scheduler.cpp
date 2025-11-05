@@ -1,39 +1,34 @@
 class Solution {
 public:
-    int leastInterval(vector<char>& tasks, int n) {
-        int freq[26] = {0};
-        for (char task : tasks) {
-            freq[task - 'A']++;
-        }
+    int leastInterval(vector<char>& tasks, int k) {
+        int n = tasks.size();
+        using P = pair<int, char>;
+        priority_queue<P> pq;
+        unordered_map<char, int> mp;
         
-        priority_queue<pair<int, char>> pq;
-        for (int i = 0; i < 26; i++) {
-            if (freq[i] > 0) {
-                pq.push({freq[i], i + 'A'});
-            }
-        }
+        for (char ch : tasks) mp[ch]++;
+        for (auto it : mp) pq.push({it.second, it.first});
         
-        int time = 0;
+        int cnt = 0;
         while (!pq.empty()) {
-            int cycle = 0;
-            vector<pair<int, char>> temp;
-            for (int i = 0; i <= n; i++) {
+            vector<pair<int, char>> ans;
+            int time = 0; 
+            
+            for (int i = 0; i <= k; i++) {
                 if (!pq.empty()) {
-                    auto task = pq.top();
+                    auto [count, ch] = pq.top();
                     pq.pop();
-                    if (task.first > 1) {
-                        temp.push_back({task.first - 1, task.second});
-                    }
-                    cycle++;
-                } else if (temp.empty()) {
-                    break;
+                    if (count > 1) ans.push_back({count - 1, ch});
+                    cnt++;
+                    time++;
                 }
+                else break; // ✅ stop early if no tasks left
             }
-            for (auto task : temp) {
-                pq.push(task);
-            }
-            time += !pq.empty() ? n + 1 : cycle;
+
+            for (auto &p : ans) pq.push(p);
+            
+            if (!pq.empty()) cnt += (k + 1 - time); // ✅ add idle time only if tasks remain
         }
-        return time;
+        return cnt;
     }
 };
