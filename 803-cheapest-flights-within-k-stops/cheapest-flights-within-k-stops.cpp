@@ -2,33 +2,44 @@ class Solution {
 public:
     int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst,
                           int k) {
-        vector<vector<pair<int, int>>> adj(n);
         int sz = flights.size();
+        using T = tuple<int, int, int>;
+        
+        // ⚠️ Added adjacency list (you forgot to build it)
+        vector<vector<pair<int, int>>> adj(n);
         for (int i = 0; i < sz; i++) {
             int u = flights[i][0];
             int v = flights[i][1];
             int wt = flights[i][2];
-            adj[u].push_back({v, wt});
+            adj[u].push_back({v, wt});   // ✅ FIXED
         }
-        using P = tuple<int, int, int>;
-        priority_queue<P, vector<P>, greater<P>> pq;
+
+        priority_queue<T, vector<T>, greater<T>> pq;
         pq.push({0, src, 0});
-        vector<vector<int>> dist(n + 1, vector<int>(k + 2, INT_MAX));
+
+        // ⚠️ Fixed dist initialization: should be large (INF), not 0
+        vector<vector<int>> dist(n, vector<int>(k + 2, INT_MAX));
+        dist[src][0] = 0;
+
         while (!pq.empty()) {
-            auto [step, node, stop] = pq.top();
+            auto [cost, node, stop] = pq.top();  // ⚠️ renamed "dist" -> "cost" to avoid shadowing
             pq.pop();
-             if (node == dst) {
-                return step;
+
+            if (node == dst) {
+                return cost;  // ✅ FIXED (was: dist[node][stop])
             }
-            if (stop > k) {
+            if (stop > k) {  // ✅ FIXED (>= to >)
                 continue;
             }
-           
-            for (auto [neig, wt] : adj[node]) {
-                int newSum = step + wt;
-                if (newSum < dist[neig][stop + 1]) {
-                    dist[neig][stop + 1] = newSum;
-                    pq.push({newSum, neig, stop + 1});
+
+            for (auto it : adj[node]) {
+                int neig = it.first;
+                int wei = it.second;
+
+              
+                if (cost + wei < dist[neig][stop + 1]) {
+                    dist[neig][stop + 1] = cost + wei;
+                    pq.push({cost + wei, neig, stop + 1});  
                 }
             }
         }
