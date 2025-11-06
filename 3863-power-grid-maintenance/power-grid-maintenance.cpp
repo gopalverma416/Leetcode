@@ -1,67 +1,75 @@
-class Solution {
+class Vertex {
 public:
-   
-    class DSU {
-    public:
-        vector<int> parent, size;
-        DSU(int n) {
-            parent.resize(n+1);
-            size.assign(n+1, 1);
-            for(int i=1; i<=n; i++) parent[i] = i;
+    int vertexId;
+    bool offline = false;
+    int powerGridId = -1;
+
+    Vertex() {}
+    Vertex(int id) : vertexId(id) {}
+};
+
+using PowerGrid = priority_queue<int, vector<int>, greater<int>>;
+using Graph = vector<vector<int>>;
+
+class Solution {
+private:
+    vector<Vertex> vertices = vector<Vertex>();
+
+    void traverse(Vertex& u, int powerGridId, PowerGrid& powerGrid,
+                  Graph& graph) {
+        u.powerGridId = powerGridId;
+        powerGrid.push(u.vertexId);
+        for (int vid : graph[u.vertexId]) {
+            Vertex& v = vertices[vid];
+            if (v.powerGridId == -1) traverse(v, powerGridId, powerGrid, graph);
         }
-        int find(int x) {
-            if(parent[x] == x) return x;
-            return parent[x] = find(parent[x]);
+    }
+
+public:
+    vector<int> processQueries(int c, vector<vector<int>>& connections,
+                               vector<vector<int>>& queries) {
+        Graph graph(c + 1);
+        vertices.resize(c + 1);
+
+        for (int i = 1; i <= c; i++) {
+            vertices[i] = Vertex(i);
         }
-        void unite(int a, int b) {
-            a = find(a), b = find(b);
-            if(a != b) {
-                if(size[a] < size[b]) swap(a,b);
-                parent[b] = a;
-                size[a] += size[b];
+
+        for (auto& conn : connections) {
+            graph[conn.at(0)].push_back(conn.at(1));
+            graph[conn.at(1)].push_back(conn.at(0));
+        }
+
+        vector<PowerGrid> powerGrids;
+
+        for (int i = 1, powerGridId = 0; i <= c; i++) {
+            auto& v = vertices[i];
+            if (v.powerGridId == -1) {
+                PowerGrid powerGrid;
+                traverse(v, powerGridId, powerGrid, graph);
+                powerGrids.push_back(powerGrid);
+                powerGridId++;
             }
-        }
-    };
-    
-    vector<int> processQueries(int c, vector<vector<int>>& connections, vector<vector<int>>& queries) {
-        DSU dsu(c);
-
-        // Step 1: Build connected components
-        for(auto &e: connections) {
-            dsu.unite(e[0], e[1]);
-        }
-
-        // Step 2: Initialize online sets for each component
-        unordered_map<int, set<int>> compOnline; 
-        vector<bool> online(c+1, true);
-
-        for(int i=1; i<=c; i++) {
-            int root = dsu.find(i);
-            compOnline[root].insert(i);
         }
 
         vector<int> ans;
-
-        // Step 3: Process queries
-        for(auto &q: queries) {
-            int type = q[0], x = q[1];
-            int root = dsu.find(x);
-
-            if(type == 1) {
-                if(online[x]) {
+        for (auto& q : queries) {
+            int op = q.at(0), x = q.at(1);
+            if (op == 1) {
+                if (!vertices[x].offline) {
                     ans.push_back(x);
                 } else {
-                    if(compOnline[root].empty()) ans.push_back(-1);
-                    else ans.push_back(*compOnline[root].begin());
+                    auto& powerGrid = powerGrids[vertices[x].powerGridId];
+                    while (!powerGrid.empty() &&
+                           vertices[powerGrid.top()].offline) {
+                        powerGrid.pop();
+                    }
+                    ans.push_back(!powerGrid.empty() ? powerGrid.top() : -1);
                 }
-            } else { // type == 2
-                if(online[x]) {
-                    online[x] = false;
-                    compOnline[root].erase(x);
-                }
+            } else if (op == 2) {
+                vertices[x].offline = true;
             }
         }
-
         return ans;
     }
 };
