@@ -1,41 +1,40 @@
 class Solution {
-    private:
-    bool isPalindrome(string& s) {
-    int left = 0;
-    int right = s.size() - 1;
-
-    while (left < right) {
-        if (s[left] != s[right]) {
-            return false;   
+private:
+    vector<vector<string>> result;
+    bool palindrome(string s){
+        int left=0;
+        int n=s.size();
+        int right=n-1;
+        while(left<=right){
+            if(s[left]!=s[right]){
+                return false;
+            }
+            left++;
+            right--;
         }
-        left++;
-        right--;
+        return true;
     }
-    return true;  
-}
-
-    void solve(int i,string s,vector<string>& temp,vector<vector<string>>& result){
-       int n=s.size();
-       if(i==n){
-        result.push_back(temp);
-       }
-        for(int j=i;j<n;j++){
-            int len=j-i+1;
-            string sub=s.substr(i,len);
-          if(isPalindrome(sub)){
-            temp.push_back(sub);
-            solve(j+1,s,temp,result);
-            temp.pop_back();
-          }
+    void solve(int idx, string s, vector<string>& ans) {
+        int n = s.size();
+        if (idx == n) {
+            result.push_back(ans);
         }
     
+        for (int len = 1; len <= n - idx; len++) {
+            string copy = s.substr(idx, len);
+            if (palindrome(copy)) {
+                ans.push_back(copy);
+                solve(idx + len, s, ans);
+                ans.pop_back();
+            }
+        }
+
     }
-public:
-    vector<vector<string>> partition(string s) {
-        int n=s.size();
-        vector<vector<string>>result;
-        vector<string>temp;
-        solve(0,s,temp,result);
-      return result;
-    }
-};
+    public:
+        vector<vector<string>> partition(string s) {
+            int n = s.size();
+            vector<string> ans;
+            solve(0, s, ans);
+            return result;
+        }
+    };
