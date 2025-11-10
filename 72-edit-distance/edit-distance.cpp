@@ -1,27 +1,23 @@
 class Solution {
     private:
-     vector<vector<int>>dp;
-    int solve(int idx1,int idx2,string word1,string word2){
-        int mini=0;
-         if(idx1<0){
-            return idx2+1;
-         }
-         if(idx2<0){
-            return idx1+1;
-         }
-         if(dp[idx1][idx2]!=-1){
-            return dp[idx1][idx2];
-         }
-        if(word1[idx1]==word2[idx2]){
-           return dp[idx1][idx2]= solve(idx1-1,idx2-1,word1,word2);
-        }else{
-            int insert=1+solve(idx1,idx2-1,word1,word2);
-            int delet=1+solve(idx1-1,idx2,word1,word2);
-            int replace=1+solve(idx1-1,idx2-1,word1,word2);
-            mini=min({insert,delet,replace});
-        }
-       return dp[idx1][idx2]= mini;
-
+    vector<vector<int>>dp;
+    int solve(int i,int j,string& s,string& p){
+       if(i<0){
+        return j+1;
+       }
+       if(j<0){
+        return i+1;
+       }
+       if(dp[i][j]!=-1){
+        return dp[i][j];
+       }
+       if(s[i]==p[j]){
+        return dp[i][j]= solve(i-1,j-1,s,p);
+       }
+       int insert=1+solve(i,j-1,s,p);
+       int delete1=1+solve(i-1,j,s,p);
+       int repalace=1+solve(i-1,j-1,s,p);
+       return dp[i][j]= min({insert,delete1,repalace});
     }
 public:
     int minDistance(string word1, string word2) {
