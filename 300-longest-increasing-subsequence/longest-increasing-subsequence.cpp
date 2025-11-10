@@ -1,27 +1,27 @@
 class Solution {
     private:
     vector<vector<int>>dp;
-    int solve(int idx,vector<int>& nums,int prev){
+    int dfs(int idx,int last,vector<int>& nums){
+        
         int n=nums.size();
-         if(idx==n){
+        if(idx==n){
             return 0;
-         }
-        if(dp[idx][prev+1]!=-1){
-            return dp[idx][prev+1];
         }
-       int take=INT_MIN;
-       if(prev==-1||nums[prev]<nums[idx]){
-        take=1+solve(idx+1,nums,idx);
-       }
-       int nonTake=solve(idx+1,nums,prev);
-       return dp[idx][prev+1]=max(take,nonTake);
+         if(dp[idx][last+1]!=-1){
+            return dp[idx][last+1];
+         }
+        int take=INT_MIN;
+        if(last==-1 || nums[last]<nums[idx]){
+           take=1+dfs(idx+1,idx,nums);
+        }
+        int drop=dfs(idx+1,last,nums);
+        return dp[idx][last+1]= max(take,drop);
     }
 public:
     int lengthOfLIS(vector<int>& nums) {
-        
-        int n=nums.size();
-        int prev=-1;
-        dp.resize(n+1,vector<int>(n+1,-1));
-        return solve(0,nums,prev);
+       int n=nums.size();
+       dp.resize(n,vector<int>(n+1,-1));
+       return dfs(0,-1,nums); 
+
     }
 };
