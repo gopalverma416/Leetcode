@@ -36,7 +36,7 @@ public:
             for (int i = 0; i < 4; i++) {
                 int new_x = x + hori[i];
                 int new_y = y + vert[i];
-                if (isValid(new_x, new_y) && grid[new_x][new_y] == 0 && dist[new_x][new_y] == INT_MAX) {
+               if (isValid(new_x,new_y) && grid[new_x][new_y]==0 && dist[new_x][new_y] > d+1 ){
                     pq.push({d + 1, new_x, new_y});
                 }
             }
