@@ -1,33 +1,40 @@
 class Solution {
-    private:
-    void dfs(int node,vector<vector<int>>& adj,vector<bool>& seen){
-        seen[node]=true;
-        for(auto& neighbor : adj[node]){
-            if(seen[neighbor]==false){
-                dfs(neighbor,adj,seen);
+private:
+    void dfs(int node, vector<vector<int>>& adj, vector<int>& vis) {
+        vis[node] = 1;
+        for (auto neig : adj[node]) {
+            if (vis[neig] == 1) {
+                continue;
             }
+            dfs(neig, adj, vis);
         }
-
     }
+
 public:
     int findCircleNum(vector<vector<int>>& nums) {
-        int n=nums.size();
-        int cnt=0;
-        vector<vector<int>>adj(n);
-        for(int i=0;i<n;i++){
-          for(int j=0;j<n;j++){
-            if(nums[i][j]==1){
-                adj[i].push_back(j);
+        int n = nums.size();
+        vector<vector<int>> adj(n + 1);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < nums[i].size(); j++) {
+                int u = i;
+                int v = j;
+             
+                if (v == u) {
+                    continue;
+                }
+                if(nums[i][j]==1){
+                  adj[u].push_back(v);
+                }
             }
-          }
         }
-        vector<bool> seen(n,false);
-    for(int i=0;i<n;i++){
-        if(seen[i]==false){
-         dfs(i,adj,seen);
-         cnt++;
+        int cnt = 0;
+        vector<int> vis(n + 1, -1);
+        for (int i = 0; i < n; i++) {
+            if (vis[i] == -1) {
+                dfs(i, adj, vis);
+                cnt++;
+            }
         }
-    }
-    return cnt;
+        return cnt;
     }
 };
